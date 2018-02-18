@@ -5,6 +5,7 @@ import java.io.*;
 class myFtpClient {
 
 	// Method to take input from Console
+	//trial comment
 	public static String takeInput() throws Exception {
 		InputStreamReader reader = new InputStreamReader(System.in);
 		BufferedReader buffer = new BufferedReader(reader);
