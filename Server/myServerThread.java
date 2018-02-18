@@ -98,54 +98,11 @@ public class myServerThread extends Thread {
 				// Get and Put are handled by myftpServer and not
 				// myFtpServerProcess
 				if (splitCommand(inputString)[0].equalsIgnoreCase("get")) {
-					// take file requested by Client into FileInputStream
-					FileInputStream myFile = new FileInputStream(splitCommand(inputString)[1]);
-					int characters;
-					do {
-						// read the characters and write them into files
-						characters = myFile.read();
-						output.writeUTF(String.valueOf(characters));
-					} while (characters != -1);
-					output.flush();
-					myFile.close();
+					mycommand.get(output, inputString);
 				}
 
 				if (splitCommand(inputString)[0].equalsIgnoreCase("put")) {
-					String filePath = "";
-					String fileName = "";
-
-					// extract file name from file path
-					if (splitCommand(inputString)[1].contains("/")) {
-						filePath = splitCommand(inputString)[1];
-						String[] pathArray = filePath.split("/");
-						fileName = pathArray[pathArray.length - 1];
-					} 
-					
-					else {
-						fileName = splitCommand(inputString)[1];
-					}
-
-					// get current path of Server
-					File file = new File(System.getProperty("user.dir"));
-					String s = file.getAbsolutePath();
-
-					// create blank file with same name at current path of
-					// Server
-					FileOutputStream fileoutput = new FileOutputStream(s + "/" + fileName);
-
-					int characters;
-
-					// read characters coming from inputStream from Client
-					do {
-						characters = Integer.parseInt(input.readUTF());
-						if (characters != -1) {
-							// Write characters to blank file
-							fileoutput.write(characters);
-						}
-					} while (characters != -1);
-					
-					fileoutput.close();
-					System.out.println("File is Received");
+					mycommand.put(input, inputString);
 				}
 
 				// close input and output streams
