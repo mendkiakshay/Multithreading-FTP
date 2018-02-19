@@ -60,11 +60,13 @@ public class myFtpServerProcess {
                 {
                     fileName = splitCommand(inputString)[1];
                 }   // get current path of Server
-                File file = new File(serverPath);
-                String s = file.getAbsolutePath();
+                File file = new File(serverPath+"/"+fileName);
+                // String s = file.getAbsolutePath();
                 // create blank file with same name at current path of
                 // Server
-                fileoutput = new FileOutputStream(s + "/" + fileName);
+                fileoutput = new FileOutputStream(file.getAbsolutePath());
+								System.out.println("Server path will be: "+file.getAbsolutePath());
+
                 int characters;
                 // read characters coming from inputStream from Client
                 do {

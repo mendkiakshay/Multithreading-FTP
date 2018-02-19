@@ -11,16 +11,18 @@ public class myClientThread extends Thread {
 	DataInputStream input;
 	DataOutputStream output;
 	String command = "";
-	
+
 	myClientThread(Socket socket){
 		this.socket = socket;
 	}
-	
+
 	public void sendDataToServer(String mycommand){
 		try {
 			command = mycommand;
-			
+
 			if(command.contains("put")){
+				output.writeUTF(command);
+				output.flush();
 				executePut();
 			}
 			else
@@ -30,13 +32,13 @@ public class myClientThread extends Thread {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void run(){
 		try {
 			input = new DataInputStream(socket.getInputStream());
 			output = new DataOutputStream(socket.getOutputStream());
 			while(true){
-				
+
 				while(input.available() == 0){
 					try {
 						Thread.sleep(1);
@@ -44,14 +46,14 @@ public class myClientThread extends Thread {
 						e.printStackTrace();
 					}
 				}
-				
+
 				if (command.equalsIgnoreCase("quit")) {
 					input.close();
 					output.close();
 					socket.close();
 					break;
 				}
-				
+
 				if (command.contains("get")) {
 					String filePath = "";
 					String fileName = "";
@@ -61,7 +63,7 @@ public class myClientThread extends Thread {
 						filePath = command.split(" ")[1];
 						String[] pathArray = filePath.split("/");
 						fileName = pathArray[pathArray.length - 1];
-					} 
+					}
 
 					else {
 						fileName = command.split(" ")[1];
@@ -88,38 +90,40 @@ public class myClientThread extends Thread {
 						String inputString = "";
 						inputString = input.readUTF();
 						System.out.println(inputString);
-					}				
-			
+					}
+
 		}
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void executePut(){
 		try{
-			
+
 			String fileName = command.split(" ")[1];
 
 			File file = new File(fileName);
 			FileInputStream myFile = new FileInputStream(file.getAbsolutePath());
+			System.out.println(file.getAbsolutePath());
 			int characters;
 
 			// Send characters to getOutputStream
 			do {
+				System.out.println("inside while");
 				characters = myFile.read();
 				output.writeUTF(String.valueOf(characters));
 			} while (characters != -1);
 			output.flush();
 			myFile.close();
 			System.out.println("File is sent");
-			
+
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 }

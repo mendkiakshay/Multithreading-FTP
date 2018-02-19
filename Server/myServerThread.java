@@ -1,4 +1,4 @@
-package GitSynFiles;
+
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -16,22 +16,22 @@ public class myServerThread extends Thread {
 	DataOutputStream output;
 	myFtpServerProcess mycommand = new myFtpServerProcess();
 	String inputString = null;
-	
+
 	myServerThread(Socket socket){
 		this.socket = socket;
 	}
-	
+
 	public String[] splitCommand(String command) {
 		return command.split(" ");
 	}
-	
+
 	public void run(){
 		try {
 			input = new DataInputStream(socket.getInputStream());
 			output = new DataOutputStream(socket.getOutputStream());
-			
+
 			while (true) {
-				
+
 				while(input.available() == 0){
 					try {
 						Thread.sleep(1);
@@ -39,7 +39,7 @@ public class myServerThread extends Thread {
 						e.printStackTrace();
 					}
 				}
-				
+
 				// read the command
 				inputString = input.readUTF();
 
@@ -54,8 +54,8 @@ public class myServerThread extends Thread {
 					if (!splitCommand(inputString)[1].equalsIgnoreCase("..")) {
 						output.writeUTF(mycommand.setCurrent(splitCommand(inputString)[1]));
 						output.flush();
-					} 
-					
+					}
+
 					else {
 						output.writeUTF(mycommand.setPrevious());
 						output.flush();
@@ -77,8 +77,8 @@ public class myServerThread extends Thread {
 						for (File file : files) {
 							allPath = allPath + "  " + file.getName() + '\t';
 						}
-					} 
-					
+					}
+
 					else {
 						files = mycommand.ls(new File(splitCommand(inputString)[1]));
 						for (File file : files) {
@@ -101,7 +101,9 @@ public class myServerThread extends Thread {
 					mycommand.get(output, inputString);
 				}
 
+				System.out.println("input string is:"+inputString);
 				if (splitCommand(inputString)[0].equalsIgnoreCase("put")) {
+					System.out.println("input string is:"+inputString);
 					mycommand.put(input, inputString);
 				}
 
@@ -113,14 +115,13 @@ public class myServerThread extends Thread {
 					break;
 				}
 			}
-				
-			
+
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-				
+
 	}
 
 }
-
