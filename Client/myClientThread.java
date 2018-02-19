@@ -1,5 +1,3 @@
-package GitSynFiles;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -21,8 +19,13 @@ public class myClientThread extends Thread {
 	public void sendDataToServer(String mycommand){
 		try {
 			command = mycommand;
-			output.writeUTF(command);
-			output.flush();
+			
+			if(command.contains("put")){
+				executePut();
+			}
+			else
+				output.writeUTF(command);
+				output.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -80,37 +83,43 @@ public class myClientThread extends Thread {
 				}
 
 				else {
-					if (command.contains("put")) {
-						String fileName = command.split(" ")[1];
-
-						File file = new File(fileName);
-						FileInputStream myFile = new FileInputStream(file.getAbsolutePath());
-						int characters;
-
-						// Send characters to getOutputStream
-						do {
-							characters = myFile.read();
-							output.writeUTF(String.valueOf(characters));
-						} while (characters != -1);
-
-						myFile.close();
-						System.out.println("File is sent");
-					}
-
-					else {
 						// for any other commands than get put quit; simply send the
 						// command to the Server
 						String inputString = "";
 						inputString = input.readUTF();
 						System.out.println(inputString);
-					}
-				}				
+					}				
 			
 		}
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void executePut(){
+		try{
+			
+			String fileName = command.split(" ")[1];
+
+			File file = new File(fileName);
+			FileInputStream myFile = new FileInputStream(file.getAbsolutePath());
+			int characters;
+
+			// Send characters to getOutputStream
+			do {
+				characters = myFile.read();
+				output.writeUTF(String.valueOf(characters));
+			} while (characters != -1);
+			output.flush();
+			myFile.close();
+			System.out.println("File is sent");
+			
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 }
