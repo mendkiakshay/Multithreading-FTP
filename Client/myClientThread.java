@@ -11,6 +11,7 @@ public class myClientThread extends Thread {
 	DataInputStream input;
 	DataOutputStream output;
 	String command = "";
+	boolean shouldrun = true;
 
 	myClientThread(Socket socket){
 		this.socket = socket;
@@ -37,21 +38,18 @@ public class myClientThread extends Thread {
 		try {
 			input = new DataInputStream(socket.getInputStream());
 			output = new DataOutputStream(socket.getOutputStream());
-			while(true){
-
-				while(input.available() == 0){
+			while(shouldrun){
+				
+				if(command.equalsIgnoreCase("quit")){
+					break;
+				}
+				
+				while((shouldrun) && (input.available() == 0)){
 					try {
 						Thread.sleep(1);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-				}
-
-				if (command.equalsIgnoreCase("quit")) {
-					input.close();
-					output.close();
-					socket.close();
-					break;
 				}
 
 				if (command.contains("get")) {
@@ -88,9 +86,12 @@ public class myClientThread extends Thread {
 						// for any other commands than get put quit; simply send the
 						// command to the Server
 						String inputString = "";
-						inputString = input.readUTF();
+						if(shouldrun){
+							inputString = input.readUTF();
+						}						
 						System.out.println(inputString);
-					}
+					}			
+				
 
 		}
 		}
@@ -111,7 +112,6 @@ public class myClientThread extends Thread {
 
 			// Send characters to getOutputStream
 			do {
-				System.out.println("inside while");
 				characters = myFile.read();
 				output.writeUTF(String.valueOf(characters));
 			} while (characters != -1);
@@ -124,6 +124,19 @@ public class myClientThread extends Thread {
 			e.printStackTrace();
 		}
 
+	}
+	
+	public void close(){
+		try {
+			shouldrun = false;
+			input.close();
+			output.close();			
+			socket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 }

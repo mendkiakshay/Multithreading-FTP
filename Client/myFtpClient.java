@@ -36,6 +36,7 @@ class myFtpClient {
 					
 			if (command.equalsIgnoreCase("quit")) {
 				nclientSocket.close();
+				myClientThread.close();
 				break;
 			}			
 		}
