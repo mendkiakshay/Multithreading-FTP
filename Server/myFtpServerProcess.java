@@ -65,7 +65,7 @@ public class myFtpServerProcess {
                 // create blank file with same name at current path of
                 // Server
                 fileoutput = new FileOutputStream(file.getAbsolutePath());
-								System.out.println("Server path will be: "+file.getAbsolutePath());
+								//System.out.println("Server path will be: "+file.getAbsolutePath());
 
                 int characters;
                 // read characters coming from inputStream from Client

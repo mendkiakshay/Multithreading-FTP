@@ -101,9 +101,9 @@ public class myServerThread extends Thread {
 					mycommand.get(output, inputString);
 				}
 
-				System.out.println("input string is:"+inputString);
+				//System.out.println("input string is:"+inputString);
 				if (splitCommand(inputString)[0].equalsIgnoreCase("put")) {
-					System.out.println("input string is:"+inputString);
+					// System.out.println("input string is:"+inputString);
 					mycommand.put(input, inputString);
 				}
 

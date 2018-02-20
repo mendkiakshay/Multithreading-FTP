@@ -39,11 +39,11 @@ public class myClientThread extends Thread {
 			input = new DataInputStream(socket.getInputStream());
 			output = new DataOutputStream(socket.getOutputStream());
 			while(shouldrun){
-				
+
 				if(command.equalsIgnoreCase("quit")){
 					break;
 				}
-				
+
 				while((shouldrun) && (input.available() == 0)){
 					try {
 						Thread.sleep(1);
@@ -88,10 +88,10 @@ public class myClientThread extends Thread {
 						String inputString = "";
 						if(shouldrun){
 							inputString = input.readUTF();
-						}						
+						}
 						System.out.println(inputString);
-					}			
-				
+					}
+
 
 		}
 		}
@@ -125,18 +125,18 @@ public class myClientThread extends Thread {
 		}
 
 	}
-	
+
 	public void close(){
 		try {
 			shouldrun = false;
 			input.close();
-			output.close();			
+			output.close();
 			socket.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
 
 }
