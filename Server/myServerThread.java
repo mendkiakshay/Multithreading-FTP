@@ -1,4 +1,6 @@
 
+
+
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -23,6 +25,7 @@ public class myServerThread extends Thread {
     myServerThread(ServerSocket sersocket) {
         try {
             this.socket = sersocket.accept();
+            System.out.println("Client connection arrived");
             this.input = new DataInputStream(socket.getInputStream());
             this.output = new DataOutputStream(socket.getOutputStream());
         } catch (IOException ex) {
@@ -50,6 +53,7 @@ public class myServerThread extends Thread {
 
                 // read the command
                 inputString = input.readUTF();
+                System.out.println(inputString);
 
                 // Call respective methods of ServerProcess of the FTP commands
                 if (splitCommand(inputString)[0].equalsIgnoreCase("mkdir")) {
@@ -93,7 +97,7 @@ public class myServerThread extends Thread {
                 }
 
                 if (splitCommand(inputString)[0].equalsIgnoreCase("pwd")) {
-
+                	System.out.println("Inside PWD");
                     output.writeUTF(mycommand.pwd(new File("")));
                     output.flush();
                 }

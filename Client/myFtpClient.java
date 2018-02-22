@@ -24,9 +24,12 @@ class myFtpClient {
         // Created a Socket with port number 9999
         //Socket clientSocket = new Socket(machineName, nportNumber);
         Socket nclientSocket = new Socket("localhost", 9999);
-
-        myClientThread myClientThread = new myClientThread(nclientSocket);
+        myClientThread myClientThread = new myClientThread(nclientSocket,"nport");
         myClientThread.start();
+
+        Socket tclientSocket = new Socket("localhost", 9998);
+        myClientThread myClientThreadTerminate = new myClientThread(tclientSocket,"tport");
+//        myClientThreadTerminate.sendDataToServer(command);
 
 
         while (true) {
@@ -40,12 +43,7 @@ class myFtpClient {
                 myClientThread.close();
                 break;
             }
-            if(command.contains("terminate"))
-            {
-                Socket tclientSocket = new Socket("localhost", 9998);
-                myClientThread myClientThreadTerminate = new myClientThread(tclientSocket);
-                myClientThreadTerminate.sendDataToServer(command);
-            }
+
         }
     }
 }
