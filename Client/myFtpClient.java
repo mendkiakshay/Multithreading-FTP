@@ -29,6 +29,9 @@ class myFtpClient {
 
         Socket tclientSocket = new Socket("localhost", 9998);
         myClientThread myClientThreadTerminate = new myClientThread(tclientSocket,"tport");
+
+        boolean isAmpersantStarted=false;
+        myClientThread myClientThreadamparsent=null;
 //        myClientThreadTerminate.sendDataToServer(command);
 
 
@@ -36,12 +39,33 @@ class myFtpClient {
             Thread.sleep(510);
             String command = takeInput();
 
+            if(command.contains("&"))
+            {
+            	isAmpersantStarted=true;
+            	myClientThreadamparsent = new myClientThread(nclientSocket,"nport");
+            	myClientThreadamparsent.start();
+            }
+
             myClientThread.sendDataToServer(command);
 
             if (command.equalsIgnoreCase("quit")) {
-                nclientSocket.close();
-                myClientThread.close();
-                break;
+
+            	if(isAmpersantStarted)
+                {
+            		System.out.println("interrupting thread");
+            		myClientThread.interrupt();
+            		myClientThreadamparsent.interrupt();
+            		myClientThread.close();
+            		myClientThreadamparsent.close();
+
+            		break;
+               }
+            	else
+            	{
+            		myClientThread.interrupt();
+            		myClientThread.close();
+            		break;
+            	}
             }
 
         }

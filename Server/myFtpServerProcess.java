@@ -20,7 +20,7 @@ public class myFtpServerProcess {
 	public static String[] splitCommand(String command) {
 		return command.split(" ");
 	}
-	public boolean get(DataOutputStream output,String inputString)
+	synchronized public boolean get(DataOutputStream output,String inputString)
 	{
     try
     {

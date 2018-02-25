@@ -1,6 +1,3 @@
-
-
-
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -39,10 +36,7 @@ public class myServerThread extends Thread {
 
     public void run() {
         try {
-
-
             while (true) {
-
                 while (input.available() == 0) {
                     try {
                         Thread.sleep(1);
@@ -104,8 +98,9 @@ public class myServerThread extends Thread {
 
                 // Get and Put are handled by myftpServer and not
                 // myFtpServerProcess
-                if (splitCommand(inputString)[0].equalsIgnoreCase("get")) {
-                    mycommand.get(output, inputString);
+                if (splitCommand(inputString)[0].equalsIgnoreCase("get"))
+                {
+                      mycommand.get(output, inputString);
                 }
 
                 //System.out.println("input string is:"+inputString);
@@ -124,7 +119,6 @@ public class myServerThread extends Thread {
             }
 
         } catch (IOException e) {
-// TODO Auto-generated catch block
             e.printStackTrace();
         }
 
