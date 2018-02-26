@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 public class myClientThread extends Thread {
 
     Socket socket,tsocket;
+
     DataInputStream input,tinput;
     DataOutputStream output,toutput;
     String command = "";
@@ -32,6 +33,7 @@ public class myClientThread extends Thread {
         		this.tsocket = socket;
  	            tinput = new DataInputStream(tsocket.getInputStream());
  	            toutput = new DataOutputStream(tsocket.getOutputStream());
+              // start();
         	}
         	}
         catch (IOException ex)
@@ -42,16 +44,30 @@ public class myClientThread extends Thread {
 
     public void sendDataToServer(String mycommand) {
         try {
-            command = mycommand;
+            if(port == "nport")
+            {
+              command = mycommand;
             System.out.println("Inside sendDataToServer Method");
             if (command.contains("put")) {
+                //System.outprintln(input.readUTF());
                 output.writeUTF(command);
                 output.flush();
+                System.out.println(input.readUTF());
                 executePut();
             } else {
                 output.writeUTF(command);
+                if(command.contains("get")){
+                  System.out.println(input.readUTF());
+                }
             }
             output.flush();
+          }
+          else
+          {
+            command = mycommand;
+            toutput.writeUTF(command);
+            toutput.flush();
+          }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -102,11 +118,22 @@ public class myClientThread extends Thread {
                     {
                     // for any other commands than get put quit; simply send the
                     // command to the Server
+                    if(port == "nport")
+                    {
                     String inputString = "";
                     if (shouldrun) {
                         inputString = input.readUTF();
                     }
                     System.out.println("output is: "+inputString);
+                    }
+                    else
+                    {
+                      String inputString = "";
+                      if (shouldrun) {
+                          inputString = tinput.readUTF();
+                      }
+                      System.out.println("output is: "+inputString);
+                    }
                   }
                 }
 
@@ -143,6 +170,7 @@ public class myClientThread extends Thread {
     		} while (characters != -1);
 
     		fileoutput.close();
+        //System.out.println("ID IS:"+input.readUTF());
     		System.out.println("File is received");
 
     	}catch(Exception ex)

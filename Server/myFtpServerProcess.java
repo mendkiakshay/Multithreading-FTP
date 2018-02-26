@@ -20,18 +20,18 @@ public class myFtpServerProcess {
 	public static String[] splitCommand(String command) {
 		return command.split(" ");
 	}
+
 	synchronized public boolean get(DataOutputStream output,String inputString)
 	{
     try
     {
-        // take file requested by Client into FileInputStream
         FileInputStream myFile = new FileInputStream(splitCommand(inputString)[1]);
         int characters;
         do {
             // read the characters and write them into files
             characters = myFile.read();
             output.writeUTF(String.valueOf(characters));
-        } while (characters != -1);
+        	} while (characters != -1);
         myFile.close();
         return true;
     }

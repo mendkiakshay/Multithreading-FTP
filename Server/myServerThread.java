@@ -19,35 +19,64 @@ public class myServerThread extends Thread {
     myFtpServerProcess mycommand = new myFtpServerProcess();
     String inputString = null;
 
-    myServerThread(ServerSocket sersocket) {
-        try {
+    myServerThread(ServerSocket sersocket)
+    {
+        try
+        {
             this.socket = sersocket.accept();
             System.out.println("Client connection arrived");
             this.input = new DataInputStream(socket.getInputStream());
             this.output = new DataOutputStream(socket.getOutputStream());
-        } catch (IOException ex) {
+        }
+        catch (IOException ex)
+        {
             Logger.getLogger(myServerThread.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public String[] splitCommand(String command) {
+    public String[] splitCommand(String command)
+    {
         return command.split(" ");
     }
+    CommandLogs createCommandID(String status, String fileName)
+    {
+      CommandLogs cmd = new CommandLogs(status, fileName);
+      //CommandLogs.listOfCommands.add(cmd);
 
-    public void run() {
+      System.out.println("LIST BEFORE IS: ");
+      for(CommandLogs c2 : CommandLogs.listOfCommands)
+      {
+        System.out.println(c2.commandId+" "+c2.status+" "+c2.fileName);
+      }
+
+      return cmd;
+    }
+
+    public void run()
+    {
         try {
             while (true) {
-                while (input.available() == 0) {
-                    try {
-                        Thread.sleep(1);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+            while (input.available() == 0)
+            {
+                try
+                {
+                    Thread.sleep(1);
                 }
+                catch (InterruptedException e)
+                {
+                    e.printStackTrace();
+                }
+            }
 
                 // read the command
                 inputString = input.readUTF();
                 System.out.println(inputString);
+
+                // Call respective methods of ServerProcess of the FTP commands
+                if (splitCommand(inputString)[0].equalsIgnoreCase("terminate")) {
+                    output.writeUTF("Terminate on Server");
+                    output.flush();
+                }
 
                 // Call respective methods of ServerProcess of the FTP commands
                 if (splitCommand(inputString)[0].equalsIgnoreCase("mkdir")) {
@@ -55,11 +84,14 @@ public class myServerThread extends Thread {
                     output.flush();
                 }
                 // received from Client
-                if (splitCommand(inputString)[0].equalsIgnoreCase("cd")) {
+                if (splitCommand(inputString)[0].equalsIgnoreCase("cd"))
+                {
                     if (!splitCommand(inputString)[1].equalsIgnoreCase("..")) {
                         output.writeUTF(mycommand.setCurrent(splitCommand(inputString)[1]));
                         output.flush();
-                    } else {
+                    }
+                     else
+                    {
                         output.writeUTF(mycommand.setPrevious());
                         output.flush();
                     }
@@ -100,17 +132,66 @@ public class myServerThread extends Thread {
                 // myFtpServerProcess
                 if (splitCommand(inputString)[0].equalsIgnoreCase("get"))
                 {
-                      mycommand.get(output, inputString);
+                  CommandLogs cmd	=	createCommandID("E",inputString);
+                  output.writeUTF(Integer.toString(cmd.commandId));
+                  output.flush();
+                  mycommand.get(output, inputString);
+
+                  int index = -1;
+                  CommandLogs commandToChange=null;
+                  for(CommandLogs c : CommandLogs.listOfCommands)
+                  {
+                    if(c.commandId == cmd.commandId)
+                    {
+                      index = CommandLogs.listOfCommands.indexOf(c);
+                      commandToChange=c;
+                      break;
+                    }
+                  }
+                  commandToChange.status ="D";
+                  CommandLogs.listOfCommands.set(index, commandToChange);
+                  System.out.println("LIST AFTER IS: "+CommandLogs.listOfCommands);
+                  // System.out.println("LIST BEFORE IS: ");
+                  for(CommandLogs c2 : CommandLogs.listOfCommands)
+                  {
+                    System.out.println(c2.commandId+" "+c2.status+" "+c2.fileName);
+                  }
+                  // output.writeUTF(cmd.commandId);
                 }
 
                 //System.out.println("input string is:"+inputString);
-                if (splitCommand(inputString)[0].equalsIgnoreCase("put")) {
+                if (splitCommand(inputString)[0].equalsIgnoreCase("put"))
+                {
                     // System.out.println("input string is:"+inputString);
+                    CommandLogs cmd	=	createCommandID("E",inputString);
+                    output.writeUTF(Integer.toString(cmd.commandId));
+                    output.flush();
                     mycommand.put(input, inputString);
+
+                    int index = -1;
+                    CommandLogs commandToChange=null;
+                    for(CommandLogs c : CommandLogs.listOfCommands)
+                    {
+                      if(c.commandId == cmd.commandId)
+                      {
+                        index = CommandLogs.listOfCommands.indexOf(c);
+                        commandToChange=c;
+                        break;
+                      }
+                    }
+                    commandToChange.status ="D";
+                    CommandLogs.listOfCommands.set(index, commandToChange);
+                    System.out.println("LIST AFTER IS: "+CommandLogs.listOfCommands);
+
+                    for(CommandLogs c2 : CommandLogs.listOfCommands)
+                    {
+                      System.out.println(c2.commandId+" "+c2.status+" "+c2.fileName);
+                    }
                 }
 
                 // close input and output streams
-                if (inputString.equalsIgnoreCase("quit")) {
+                if (inputString.equalsIgnoreCase("quit"))
+                {
                     input.close();
                     output.close();
                     socket.close();

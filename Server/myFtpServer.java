@@ -1,11 +1,10 @@
-
-
 import java.net.*;
 import java.io.*;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 
 class myFtpServer {
+
 
     public static void main(String[] args) {
         //String nport = args[0];

@@ -29,6 +29,7 @@ class myFtpClient {
 
         Socket tclientSocket = new Socket("localhost", 9998);
         myClientThread myClientThreadTerminate = new myClientThread(tclientSocket,"tport");
+        myClientThreadTerminate.start();
 
         boolean isAmpersantStarted=false;
         myClientThread myClientThreadamparsent=null;
