@@ -29,7 +29,7 @@ class myFtpClient {
 
         Socket tclientSocket = new Socket("localhost", 9998);
         myClientThread myClientThreadTerminate = new myClientThread(tclientSocket,"tport");
-        myClientThreadTerminate.start();
+        // myClientThreadTerminate.start();
 
         boolean isAmpersantStarted=false;
         myClientThread myClientThreadamparsent=null;
@@ -47,7 +47,10 @@ class myFtpClient {
             	myClientThreadamparsent.start();
             }
 
+            if(!command.contains("terminate"))
             myClientThread.sendDataToServer(command);
+            else
+            myClientThreadTerminate.sendDataToServer(command);
 
             if (command.equalsIgnoreCase("quit")) {
 

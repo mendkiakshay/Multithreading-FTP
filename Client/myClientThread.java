@@ -48,6 +48,7 @@ public class myClientThread extends Thread {
             {
               command = mycommand;
             System.out.println("Inside sendDataToServer Method");
+
             if (command.contains("put")) {
                 //System.outprintln(input.readUTF());
                 output.writeUTF(command);
@@ -64,9 +65,11 @@ public class myClientThread extends Thread {
           }
           else
           {
+              System.out.println("Inside sendDataToServer Method of TPORT");
             command = mycommand;
             toutput.writeUTF(command);
             toutput.flush();
+            System.out.println(tinput.readUTF());
           }
         } catch (IOException e) {
             e.printStackTrace();
@@ -118,22 +121,14 @@ public class myClientThread extends Thread {
                     {
                     // for any other commands than get put quit; simply send the
                     // command to the Server
-                    if(port == "nport")
-                    {
+                    
                     String inputString = "";
                     if (shouldrun) {
                         inputString = input.readUTF();
                     }
                     System.out.println("output is: "+inputString);
-                    }
-                    else
-                    {
-                      String inputString = "";
-                      if (shouldrun) {
-                          inputString = tinput.readUTF();
-                      }
-                      System.out.println("output is: "+inputString);
-                    }
+
+
                   }
                 }
 
