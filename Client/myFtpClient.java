@@ -25,16 +25,15 @@ class myFtpClient {
         //Socket clientSocket = new Socket(machineName, nportNumber);
         Socket nclientSocket = new Socket("localhost", 9999);
         myClientThread myClientThread = new myClientThread(nclientSocket,"nport");
+        //myClientThread.command = takeInput();
         myClientThread.start();
+
 
         Socket tclientSocket = new Socket("localhost", 9998);
         myClientThread myClientThreadTerminate = new myClientThread(tclientSocket,"tport");
-        // myClientThreadTerminate.start();
 
         boolean isAmpersantStarted=false;
         myClientThread myClientThreadamparsent=null;
-//        myClientThreadTerminate.sendDataToServer(command);
-
 
         while (true) {
             Thread.sleep(510);
@@ -42,13 +41,19 @@ class myFtpClient {
 
             if(command.contains("&"))
             {
-            	isAmpersantStarted=true;
-            	myClientThreadamparsent = new myClientThread(nclientSocket,"nport");
-            	myClientThreadamparsent.start();
-            }
-
-            if(!command.contains("terminate"))
+              // myClientThread.command="";
+              if(!isAmpersantStarted)
+            	{
+              myClientThreadamparsent = new myClientThread(nclientSocket,"nport");
+              myClientThreadamparsent.start();
+              }
+              isAmpersantStarted=true;
+              myClientThreadamparsent.sendDataToServer(command);
+            }else if(!command.contains("terminate"))
+            {
+          
             myClientThread.sendDataToServer(command);
+            }
             else
             myClientThreadTerminate.sendDataToServer(command);
 
@@ -56,13 +61,12 @@ class myFtpClient {
 
             	if(isAmpersantStarted)
                 {
-            		System.out.println("interrupting thread");
-            		myClientThread.interrupt();
-            		myClientThreadamparsent.interrupt();
-            		myClientThread.close();
-            		myClientThreadamparsent.close();
-
-            		break;
+              		System.out.println("interrupting thread");
+              		myClientThread.interrupt();
+              		myClientThreadamparsent.interrupt();
+              		myClientThread.close();
+              		myClientThreadamparsent.close();
+              		break;
                }
             	else
             	{

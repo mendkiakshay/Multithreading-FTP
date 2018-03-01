@@ -46,26 +46,29 @@ public class myClientThread extends Thread {
         try {
             if(port == "nport")
             {
-              command = mycommand;
-            System.out.println("Inside sendDataToServer Method");
+              this.command = mycommand;
+              System.out.println("Inside sendDataToServer Method; command is: "+this.command);
 
-            if (command.contains("put")) {
-                //System.outprintln(input.readUTF());
+            if (command.contains("put"))
+            {
+
                 output.writeUTF(command);
                 output.flush();
-                System.out.println(input.readUTF());
-                executePut();
-            } else {
+
+                 // executePut();
+            }
+            else
+            {
                 output.writeUTF(command);
-                if(command.contains("get")){
-                  System.out.println(input.readUTF());
-                }
+                // if(command.contains("get")){
+                //
+                // }
             }
             output.flush();
           }
           else
           {
-              System.out.println("Inside sendDataToServer Method of TPORT");
+            System.out.println("Inside sendDataToServer Method of TPORT");
             command = mycommand;
             toutput.writeUTF(command);
             toutput.flush();
@@ -88,10 +91,14 @@ public class myClientThread extends Thread {
             	 if(input!=null)
                  {
                      if(shouldrun)
-                    while ((shouldrun) && (input.available() == 0)) {
-                    try {
+                    while ((shouldrun) && (input.available() == 0))
+                    {
+                    try
+                    {
                         Thread.sleep(1);
-                    } catch (InterruptedException e) {
+                    }
+                    catch (InterruptedException e)
+                    {
                         //e.printStackTrace();
                     	Thread.currentThread().interrupt();
                     }
@@ -101,19 +108,19 @@ public class myClientThread extends Thread {
                     }
                 }
                 }
-
-
                 if (command.contains("get"))
                 {
-                	try {
-                	executeGet();
-                  }
-                	catch(Exception ex)
-                	{
-                    ex.printStackTrace();
-                	System.out.println(ex.getMessage());
-                	}
-
+                  System.out.println(input.readUTF());
+                	executeGet(this.input, this.output);
+                  this.command="";
+                }
+                else
+                if(command.contains("put"))
+                {
+                  System.out.println("inside command.contains put");
+                  System.out.println("command ID from server is: "+input.readUTF());
+                  executePut();
+                  this.command="";
                 }
                 else
                 {
@@ -121,24 +128,25 @@ public class myClientThread extends Thread {
                     {
                     // for any other commands than get put quit; simply send the
                     // command to the Server
-                    
+
                     String inputString = "";
                     if (shouldrun) {
                         inputString = input.readUTF();
                     }
                     System.out.println("output is: "+inputString);
-
-
+                    this.command="";
                   }
                 }
+                // this.command="";
 
             }
         } catch (Exception e) {
-            e.printStackTrace();
+          System.out.println(e.getMessage());
+          //  e.printStackTrace();
         }
     }
 
-  synchronized public void executeGet()
+  synchronized public void executeGet(DataInputStream input1, DataOutputStream output1)
   	{
     	try {
     		String filePath = "";
@@ -158,7 +166,7 @@ public class myClientThread extends Thread {
 
     		// Write characters coming in from inputStream
     		do {
-    			characters = Integer.parseInt(input.readUTF());
+    			characters = Integer.parseInt(input1.readUTF());
     			if (characters != -1) {
     				fileoutput.write(characters);
     			}
@@ -170,14 +178,14 @@ public class myClientThread extends Thread {
 
     	}catch(Exception ex)
     	{
-        ex.printStackTrace();
+      //  ex.printStackTrace();
     		System.out.println(ex.getMessage());
     	}
     }
 
-	public void executePut() {
+synchronized public void executePut() {
         try {
-
+            System.out.println("inside execyte put");
             String fileName = command.split(" ")[1];
 
             File file = new File(fileName);

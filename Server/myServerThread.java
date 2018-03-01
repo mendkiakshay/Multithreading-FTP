@@ -74,8 +74,30 @@ public class myServerThread extends Thread {
 
                 // Call respective methods of ServerProcess of the FTP commands
                 if (splitCommand(inputString)[0].equalsIgnoreCase("terminate")) {
-                    output.writeUTF("Terminate on Server");
+                    
+                    int cmdId = Integer.parseInt(splitCommand(inputString)[1]);
+
+                    int index = -1;
+                    CommandLogs commandToChange=null;
+                    for(CommandLogs c : CommandLogs.listOfCommands)
+                    {
+                      if(c.commandId == cmdId)
+                      {
+                        index = CommandLogs.listOfCommands.indexOf(c);
+                        commandToChange=c;
+                        break;
+                      }
+                    }
+                    commandToChange.status ="T";
+                    CommandLogs.listOfCommands.set(index, commandToChange);
+                    output.writeUTF("Terminate on Server: "+String.valueOf(cmdId));
                     output.flush();
+
+                    System.out.println("LIST AFTER TERMINATE IS: ");
+                    for(CommandLogs c2 : CommandLogs.listOfCommands)
+                    {
+                      System.out.println(c2.commandId+" "+c2.status+" "+c2.fileName);
+                    }
                 }
 
                 // Call respective methods of ServerProcess of the FTP commands
@@ -135,7 +157,7 @@ public class myServerThread extends Thread {
                   CommandLogs cmd	=	createCommandID("E",inputString);
                   output.writeUTF(Integer.toString(cmd.commandId));
                   output.flush();
-                  mycommand.get(output, inputString);
+                  mycommand.get(output, inputString, cmd);
 
                   int index = -1;
                   CommandLogs commandToChange=null;

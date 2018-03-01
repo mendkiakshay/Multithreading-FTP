@@ -21,27 +21,27 @@ public class myFtpServerProcess {
 		return command.split(" ");
 	}
 
-	synchronized public boolean get(DataOutputStream output,String inputString)
+synchronized public boolean get(DataOutputStream output,String inputString, CommandLogs cmd)
+{
+  try
+  {
+      FileInputStream myFile = new FileInputStream(splitCommand(inputString)[1]);
+      int characters;
+      do {
+          // read the characters and write them into files
+          characters = myFile.read();
+          output.writeUTF(String.valueOf(characters));
+      	} while (characters != -1);
+      myFile.close();
+      return true;
+  }
+  catch (IOException ex)
 	{
-    try
-    {
-        FileInputStream myFile = new FileInputStream(splitCommand(inputString)[1]);
-        int characters;
-        do {
-            // read the characters and write them into files
-            characters = myFile.read();
-            output.writeUTF(String.valueOf(characters));
-        	} while (characters != -1);
-        myFile.close();
-        return true;
-    }
-    catch (IOException ex)
-		{
-					System.out.println(ex.getMessage());
-			    return false;
-    }
+				System.out.println(ex.getMessage());
+		    return false;
+  }
 
-	}
+}
 	public boolean put(DataInputStream input, String inputString)
 	{
             try
