@@ -42,16 +42,16 @@ class myFtpClient {
             if(command.contains("&"))
             {
               // myClientThread.command="";
-              if(!isAmpersantStarted)
-            	{
+              // if(!isAmpersantStarted)
+            	// {
               myClientThreadamparsent = new myClientThread(nclientSocket,"nport");
               myClientThreadamparsent.start();
-              }
+              // }
               isAmpersantStarted=true;
               myClientThreadamparsent.sendDataToServer(command);
             }else if(!command.contains("terminate"))
             {
-          
+
             myClientThread.sendDataToServer(command);
             }
             else
