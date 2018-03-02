@@ -54,8 +54,10 @@ class myFtpClient {
 
             myClientThread.sendDataToServer(command);
             }
-            else
-            myClientThreadTerminate.sendDataToServer(command);
+            else{
+              myClientThreadamparsent.terminated = true;
+              myClientThreadTerminate.sendDataToServer(command);
+            }
 
             if (command.equalsIgnoreCase("quit")) {
 

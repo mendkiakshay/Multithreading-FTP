@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 public class myClientThread extends Thread {
 
     Socket socket,tsocket;
-
+    boolean terminated = false;
     DataInputStream input,tinput;
     DataOutputStream output,toutput;
     String command = "";
@@ -161,15 +161,28 @@ public class myClientThread extends Thread {
     			fileName = command.split(" ")[1];
     		}
     		// create blank file
-    		FileOutputStream fileoutput = new FileOutputStream(fileName);
-    		int characters;
 
+        FileOutputStream fileoutput = new FileOutputStream(fileName);
+
+    		int characters;
+        boolean endOfFile = false;
     		// Write characters coming in from inputStream
     		do {
     			characters = Integer.parseInt(input1.readUTF());
-    			if (characters != -1) {
+    			if (characters != -1 && characters!=-2)
+          {
     				fileoutput.write(characters);
     			}
+          else
+          if(characters == -2)
+          {
+          fileoutput.close();
+          File deleteFile = new File(fileName);
+          deleteFile.delete();
+          System.out.println("minus 2 and FileDeleted");
+            break;
+          }
+
     		} while (characters != -1);
 
     		fileoutput.close();
@@ -192,11 +205,17 @@ synchronized public void executePut() {
             FileInputStream myFile = new FileInputStream(file.getAbsolutePath());
             //System.out.println(file.getAbsolutePath());
             int characters;
-
             // Send characters to getOutputStream
             do {
                 characters = myFile.read();
                 output.writeUTF(String.valueOf(characters));
+                if(this.terminated)
+                {
+                  output.flush();
+  								output.writeUTF(String.valueOf(-2));
+  								System.out.println("breaking");
+  								break;
+                }
             } while (characters != -1);
             output.flush();
             myFile.close();

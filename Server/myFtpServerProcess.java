@@ -17,20 +17,47 @@ public class myFtpServerProcess {
 
 
 	// splitCommand splits the string with space
-	public static String[] splitCommand(String command) {
+	public static String[] splitCommand(String command)
+	{
 		return command.split(" ");
 	}
-
+	public static String getStatus(CommandLogs cmd)
+	{
+		for(CommandLogs c : CommandLogs.listOfCommands)
+		{
+			if(c.commandId == cmd.commandId)
+			{
+				return c.status;
+			}
+		}
+		return "";
+	}
 synchronized public boolean get(DataOutputStream output,String inputString, CommandLogs cmd)
 {
   try
   {
       FileInputStream myFile = new FileInputStream(splitCommand(inputString)[1]);
-      int characters;
+      int characters, counter;
+			String status="";
+			counter = 0;
       do {
           // read the characters and write them into files
           characters = myFile.read();
           output.writeUTF(String.valueOf(characters));
+						counter = counter + 1;
+						if(counter	==	250)
+						{
+							counter	=	0;
+							status = getStatus(cmd);
+							if(status == "T")
+							{
+								//DoSomething
+								output.flush();
+								output.writeUTF(String.valueOf(-2));
+								System.out.println("breaking");
+								break;
+							}
+						}
       	} while (characters != -1);
       myFile.close();
       return true;
@@ -65,17 +92,24 @@ synchronized public boolean get(DataOutputStream output,String inputString, Comm
                 // create blank file with same name at current path of
                 // Server
                 fileoutput = new FileOutputStream(file.getAbsolutePath());
-								//System.out.println("Server path will be: "+file.getAbsolutePath());
 
                 int characters;
                 // read characters coming from inputStream from Client
                 do {
                     characters = Integer.parseInt(input.readUTF());
-                    if (characters != -1)
-                    {
-                        // Write characters to blank file
-                        fileoutput.write(characters);
-                    }
+										if (characters != -1 && characters!=-2)
+										{
+											fileoutput.write(characters);
+										}
+										else
+										if(characters == -2)
+										{
+										fileoutput.close();
+										file.delete();
+										System.out.println("minus 2 and FileDeleted");
+										break;
+										}
+
                 } while (characters != -1);
                 fileoutput.close();
                 System.out.println("File is Received");
