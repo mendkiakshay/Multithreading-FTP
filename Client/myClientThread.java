@@ -42,51 +42,44 @@ public class myClientThread extends Thread {
         }
     }
 
+    //sendDataToServer sends command received to the Server
     public void sendDataToServer(String mycommand) {
         try {
+            //use appropriate ports
             if(port == "nport")
             {
               this.command = mycommand;
-              System.out.println("Inside sendDataToServer Method; command is: "+this.command);
+              // System.out.println("Inside sendDataToServer Method; command is: "+this.command);
 
             if (command.contains("put"))
             {
-
                 output.writeUTF(command);
                 output.flush();
-
-                 // executePut();
             }
             else
             {
                 output.writeUTF(command);
-                // if(command.contains("get")){
-                //
-                // }
             }
             output.flush();
           }
           else
           {
-            System.out.println("Inside sendDataToServer Method of TPORT");
+            // System.out.println("Inside sendDataToServer Method of TPORT");
             command = mycommand;
             toutput.writeUTF(command);
             toutput.flush();
             System.out.println(tinput.readUTF());
           }
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             e.printStackTrace();
         }
     }
-
+    //Run method for multithreading
     public void run() {
         try {
-
             while (shouldrun) {
-
-              /*  if (command.equalsIgnoreCase("quit")) {
-                    break;
-                }*/
 
             	 if(input!=null)
                  {
@@ -110,14 +103,14 @@ public class myClientThread extends Thread {
                 }
                 if (command.contains("get"))
                 {
-                  System.out.println(input.readUTF());
+                  System.out.println("command ID from server is: "+input.readUTF());
                 	executeGet(this.input, this.output);
                   this.command="";
                 }
                 else
                 if(command.contains("put"))
                 {
-                  System.out.println("inside command.contains put");
+                  // System.out.println("inside command.contains put");
                   System.out.println("command ID from server is: "+input.readUTF());
                   executePut();
                   this.command="";
@@ -133,7 +126,7 @@ public class myClientThread extends Thread {
                     if (shouldrun) {
                         inputString = input.readUTF();
                     }
-                    System.out.println("output is: "+inputString);
+                    System.out.println(inputString);
                     this.command="";
                   }
                 }
@@ -174,20 +167,19 @@ public class myClientThread extends Thread {
     				fileoutput.write(characters);
     			}
           else
-          if(characters == -2)
+          if(characters == -2)  //-2 is received if server terminates
           {
           fileoutput.close();
           File deleteFile = new File(fileName);
           deleteFile.delete();
-          System.out.println("minus 2 and FileDeleted");
-            break;
+          break;
           }
 
     		} while (characters != -1);
 
     		fileoutput.close();
         //System.out.println("ID IS:"+input.readUTF());
-    		System.out.println("File is received");
+    		System.out.println("Operation is completed");
 
     	}catch(Exception ex)
     	{
@@ -198,7 +190,7 @@ public class myClientThread extends Thread {
 
 synchronized public void executePut() {
         try {
-            System.out.println("inside execyte put");
+            // System.out.println("inside execyte put");
             String fileName = command.split(" ")[1];
 
             File file = new File(fileName);
@@ -212,15 +204,14 @@ synchronized public void executePut() {
                 if(this.terminated)
                 {
                   output.flush();
-  								output.writeUTF(String.valueOf(-2));
-  								System.out.println("breaking");
+  								output.writeUTF(String.valueOf(-2));  //send minus 2 if terminate
+  								// System.out.println("breaking");
   								break;
                 }
             } while (characters != -1);
             output.flush();
             myFile.close();
-            System.out.println("File is sent");
-
+            System.out.println("Operation is done");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -228,13 +219,12 @@ synchronized public void executePut() {
 
     public void close() {
         try {
-        	System.out.println("inside void close");
+        	// System.out.println("inside void close");
             shouldrun = false;
             input.close();
             output.close();
             socket.close();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
